@@ -54,6 +54,7 @@ prod-LoadDomainPolicyChangeEvents
 prod-LoadIntegrationEvents
 prod-LoadLoginEvents
 prod-LoadSecurityGroups
+
 Each of those Lambda functions reads the message if its respective queue, validates it, and loads the item in DynamoDB.  The seven tables the data is loaded in are as follows:
 
 prod-Accounts
@@ -63,6 +64,7 @@ prod-DomainPolicyChangeEvents
 prod-IntegrationEvents
 prod-LoginEvents
 prod-SecurityGroups
+
 At this point, the data is loaded into DynamoDB.  The next part of the process is to generate metrics off that data.
 
 Stage 2: Generate the Metrics
@@ -84,6 +86,7 @@ prod-DomainPolicyChangeWeeklyMetricsTasks
 prod-IntegrationWeeklyMetricsTasks
 prod-LoginWeeklyMetricsTasks
 prod-SecurityGroupWeeklyMetricsTasks
+
 For each of those queues, there is a Lambda function reading the messages and generating the appropriate metrics.  The names of the seven Lambda functions that generate daily metrics are as follows:
 
 prod-GenerateAccountDailyMetrics
@@ -111,6 +114,7 @@ prod-GenerateDomainPolicyChangeWeeklyMetrics
 prod-GenerateIntegrationWeeklyMetrics
 prod-GenerateLoginWeeklyMetrics
 prod-GenerateSecurityGroupWeeklyMetrics 
+
 These Lambda functions read daily metrics from the daily metrics tables, generate metrics, and then write the metrics to the following seven tables:
 
 prod-AccountWeeklyMetrics
@@ -123,6 +127,7 @@ prod-SecurityGroupWeeklyMetrics
 The completes Stage 2: Generate the Metrics
 
 Stage 3: Generate the Report
+
 At this point, the functionality across the various event/file types converges back together to form one report.  Each night, the prod-QueueReportForTenant Lambda function fires.  This Lambda function puts 1 message/tenant on the prod-ReportTasks queue.  
 
 The prod-GenerateReportHtml Lambda function read messages off that queue.  For each message, it queries the seven weekly metrics tasks tables listed above, generates some additional metrics based off that data, generates the html of the report with the data filled in, and passes the fulll html to the GeneratePdfData Lambda function.
@@ -132,6 +137,7 @@ The prod-GeneratePdfData Lambda function takes the html and generates a PDF file
 The prod-GenerateReportHtml Lambda function then takes that PDF file data and writes it to an actual function in the prod-mercer-client-reports S3 bucket.  This is the PDF file which an Admin can go download, is emailed out, etc.  
 
 Stage 4: Email the Report
+
 Each time a file is dropped in the prod-mercer-client-reports S3 bucket, the EmailReport Lambda function fires.  This Lambda function gets the email distribution list for that tenant from DynamoDB and emails the PDF as an attachment to those individuals.
 
 
