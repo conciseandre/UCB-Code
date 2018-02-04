@@ -11,8 +11,8 @@ import json
 def connect (url):
 
     thisurl = url
-    user = 'adouglas@cpsgpartners.com'
-    pwd = 'dr4nd-rEad'
+    user = ''
+    pwd = ''
 
 
     #HTTP Request
