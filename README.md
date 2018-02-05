@@ -1,5 +1,3 @@
 # UCB-Code
 
-This repository contains sanitized code for Monitor, Zendesk and full code for cryptocurrency analysis.
-
-To reach either code structure, please navigate to the correct branch. 
+This branch contains my senior thesis in its entirety and also MATLAB and C++ code that I used to compute the flow environment for different morphologies.
